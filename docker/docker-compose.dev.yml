@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:15
+    container_name: spring-dev-db
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: devpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ../ddl/v1.0-schema-core.sql:/docker-entrypoint-initdb.d/01-schema.sql
+
+  comic-nginx:
+    image: nginx:alpine
+    container_name: comic-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./comic_data:/usr/share/nginx/html/comic_data:ro 
+volumes:
+  db_data:

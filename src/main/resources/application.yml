@@ -1,0 +1,19 @@
+server:
+  port: 2426
+
+storage:
+  location: http://localhost/comic
+
+spring:
+  output:
+      ansi:
+        enabled: always
+  profiles:
+    active: dev
+  application:
+    name: Comic-Media-Service
+
+servlet:
+    multipart:
+      max-file-size: 10MB    
+      max-request-size: 100MB
