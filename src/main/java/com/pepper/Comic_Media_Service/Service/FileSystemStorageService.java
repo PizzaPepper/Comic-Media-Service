@@ -21,15 +21,18 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class FileSystemStorageService implements StorageService {
 
-    private StorageProperties properties;
+    private final StorageProperties properties;
 
     @Override
-    public List<PageData> storeChapter(List<MultiPartPageData> pages, UUID chapterVersionID) {
+    public List<PageData> storeChapter(List<MultiPartPageData> pages) {
+
+        UUID newChapterVID = UUID.randomUUID();
+
         List<PageData> storedPages = new ArrayList<>();
 
         Path rootLocation = Path.of(properties.getLocation()); 
 
-        Path chapterFolder = rootLocation.resolve("chapter-versions").resolve(chapterVersionID.toString());
+        Path chapterFolder = rootLocation.resolve("chapter-versions").resolve(newChapterVID.toString());
 
         for (MultiPartPageData page : pages) {
             MultipartFile file = page.getFile();
@@ -56,7 +59,7 @@ public class FileSystemStorageService implements StorageService {
 
                 FileUtils.copyInputStreamToFile(file.getInputStream(), targetFile);
 
-                String relativeUrl = String.format("/uploads/chapter-versions/%s/%s", chapterVersionID, fileName);
+                String relativeUrl = String.format("/uploads/chapter-versions/%s/%s", newChapterVID, fileName);
 
                 storedPages.add(PageData.builder()
                         .pageNumber(page.getOrderNumber())

@@ -18,12 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.pepper.Comic_Media_Service.DTO.ChapterData;
+import com.pepper.Comic_Media_Service.DTO.ChapterVersionData;
+import com.pepper.Comic_Media_Service.DTO.PageData;
 import com.pepper.Comic_Media_Service.DTO.Request.CreateChapterDataRequest;
 import com.pepper.Comic_Media_Service.DTO.Request.CreateChapterRequest;
 import com.pepper.Comic_Media_Service.DTO.Response.GenericResponse;
 import com.pepper.Comic_Media_Service.Exception.ResourceAlreadyExistsException;
 import com.pepper.Comic_Media_Service.Exception.ResourceNotFoundException;
 import com.pepper.Comic_Media_Service.Service.ChapterService;
+import com.pepper.Comic_Media_Service.Service.StorageService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +39,8 @@ import lombok.extern.slf4j.Slf4j;
 public class ChapterController {
 
         private final ChapterService chapterService;
+        private final StorageService storageService;
+        
 
         @GetMapping()
         public ResponseEntity<List<ChapterData>> getAllChapters(@PathVariable("comicID") UUID comicID)
@@ -52,11 +57,22 @@ public class ChapterController {
                 @PathVariable("chapterID") UUID chapterID,
                 @RequestHeader("X-Scan-Group-Id") UUID groupID,
                 @RequestParam("pages") List<MultipartFile> pages
-        ) {
+        ) throws ResourceNotFoundException, ResourceAlreadyExistsException {
                 
-                log.info("{} - {} - {} - {}" , chapterID.toString(), groupID.toString() , pages.size());
                 
-                return ResponseEntity.ok(null);
+                List<PageData> pagesData = storageService.storeChapter(chapterService.buildMultiPartPageData(pages));
+
+                ChapterVersionData pagesAdded = chapterService.createChapterVersionData(chapterID, groupID, pagesData);
+                
+                return ResponseEntity.status(HttpStatus.CREATED)
+                        .body(GenericResponse.builder()
+                                .success(true)
+                                .message(String.format("It was uploaded %d pages for '%s' - '%s'", 
+                                        pagesAdded.getPages().size(), 
+                                        pagesAdded.getChapter().getTitle(),
+                                        pagesAdded.getChapter().getComic().getTitle()))
+                                .timestamp(LocalDateTime.now())
+                        .build());
         }
 
         @PostMapping()

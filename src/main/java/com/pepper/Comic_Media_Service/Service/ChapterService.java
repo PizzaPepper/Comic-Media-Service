@@ -1,5 +1,6 @@
 package com.pepper.Comic_Media_Service.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.pepper.Comic_Media_Service.DTO.ChapterData;
 import com.pepper.Comic_Media_Service.DTO.ChapterVersionData;
 import com.pepper.Comic_Media_Service.DTO.MultiPartPageData;
+import com.pepper.Comic_Media_Service.DTO.PageData;
 import com.pepper.Comic_Media_Service.DTO.Request.CreateChapterDataRequest;
 import com.pepper.Comic_Media_Service.Entity.ChapterEntity;
 import com.pepper.Comic_Media_Service.Entity.ChapterVersionEntity;
@@ -38,8 +40,6 @@ public class ChapterService {
 
         private final ChapterMapper chapterMapper;
 
-        private final StorageService storageService;
-
         @Transactional
         public ChapterEntity createChapterData(CreateChapterDataRequest request)
                         throws ResourceAlreadyExistsException, ResourceNotFoundException {
@@ -60,13 +60,14 @@ public class ChapterService {
                                 .comic(comic)
                                 .title(request.getTitle())
                                 .number(request.getNewNumber())
+                                .createdAt(LocalDateTime.now())
                                 .build();
 
                 return chapterRepository.save(newChapter);
         }
 
         @Transactional
-        public ChapterVersionData createChapterVersionData(UUID chapterID, UUID groupID, List<MultipartFile> pages)
+        public ChapterVersionData createChapterVersionData(UUID chapterID, UUID groupID, List<PageData> pagesData)
                         throws ResourceNotFoundException, ResourceAlreadyExistsException {
 
                 ScanGroupEntity group = scanGroupRepository.findById(groupID)
@@ -84,15 +85,14 @@ public class ChapterService {
                                         String.format("Chapter number '%d' from '%s' already exists",
                                                         chapter.getNumber(), chapter.getComic().getTitle()));
                 }
-                // <---- TODO: it is work??
+                
                 ChapterVersionEntity chapterVersion = ChapterVersionEntity.builder()
                                 .chapter(chapter)
                                 .scanGroup(group)
                                 .build();
 
-                List<MultiPartPageData> mppd = this.buildMultiPartPageData(pages);
 
-                List<PageEntity> pageEntities = storageService.storeChapter(mppd, chapterID)
+                List<PageEntity> pageEntities = pagesData
                                 .stream()
                                 .map(pageData -> PageEntity.builder()
                                                 .chapterVersion(chapterVersion)
@@ -105,7 +105,6 @@ public class ChapterService {
 
                 ChapterVersionEntity savedVersion = chapterVersionRepository.save(chapterVersion);
 
-                // ---->
 
                 return chapterMapper.toData(savedVersion);
 
@@ -126,7 +125,7 @@ public class ChapterService {
                 return chapters;
         }
 
-        private List<MultiPartPageData> buildMultiPartPageData(List<MultipartFile> pages) {
+        public List<MultiPartPageData> buildMultiPartPageData(List<MultipartFile> pages) {
                 return pages.stream()
                                 .map(page -> {
                                         int order = Integer.parseInt(

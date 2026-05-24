@@ -1,13 +1,12 @@
 package com.pepper.Comic_Media_Service.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 import com.pepper.Comic_Media_Service.DTO.MultiPartPageData;
 import com.pepper.Comic_Media_Service.DTO.PageData;
 
 public interface StorageService {
     
-    public List<PageData> storeChapter(List<MultiPartPageData> pages, UUID chapterVersionID);
+    public List<PageData> storeChapter(List<MultiPartPageData> pages);
 
 }

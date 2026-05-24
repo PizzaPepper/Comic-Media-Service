@@ -28,7 +28,7 @@ public class ComicEntity {
     @Id
     @GeneratedValue
     @UuidGenerator
-    @Column(name = "manga_id", updatable = false, nullable = false)
+    @Column(name = "comic_id", updatable = false, nullable = false)
     private UUID id;
 
     private String title;

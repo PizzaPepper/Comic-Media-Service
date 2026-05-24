@@ -1,5 +1,5 @@
 CREATE TABLE comic (
-    manga_id UUID PRIMARY KEY,
+    comic_id UUID PRIMARY KEY,
     title VARCHAR(255),
     author VARCHAR(255),
     status VARCHAR(100),
