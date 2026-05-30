@@ -16,7 +16,7 @@ CREATE TABLE chapter (
     updated_at TIMESTAMP,
     CONSTRAINT fk_chapter_comic
         FOREIGN KEY (comic_id)
-        REFERENCES comic(manga_id)
+        REFERENCES comic(comic_id)
         ON DELETE CASCADE
 );
 

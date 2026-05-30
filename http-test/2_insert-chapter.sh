@@ -1,5 +1,5 @@
 #!/bin/bash
 
-curl -X POST localhost:2426/api/comic/c49d3c47-d478-482c-a3ea-ea396e4494e0/chapters \
+curl -X POST localhost:8080/api/comic/aaa16568-2100-4d43-b232-75f9f7efb06c/chapters \
 -H "Content-Type: application/json" \
 -d '{"title": "Spider-Girl", "number": 105}'

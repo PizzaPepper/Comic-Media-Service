@@ -11,5 +11,10 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
       - ../ddl/v1.0-schema-core.sql:/docker-entrypoint-initdb.d/01-schema.sql
+  floci:
+    image: floci/floci:1.5.18
+    container_name: aws-local
+    ports:
+      - "4566:4566"
 volumes:
   db_data:

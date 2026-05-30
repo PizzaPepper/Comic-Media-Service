@@ -8,7 +8,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.pepper.Comic_Media_Service.DTO.ChapterData;
 import com.pepper.Comic_Media_Service.DTO.ChapterVersionData;
 import com.pepper.Comic_Media_Service.DTO.MultiPartPageData;
 import com.pepper.Comic_Media_Service.DTO.PageData;
@@ -108,21 +107,6 @@ public class ChapterService {
 
                 return chapterMapper.toData(savedVersion);
 
-        }
-
-        @Transactional
-        public List<ChapterData> byComicId(UUID idComic) throws ResourceNotFoundException {
-
-                ComicEntity comic = comicRepository.findById(idComic)
-                                .orElseThrow(() -> new ResourceNotFoundException(
-                                                "\'" + idComic + "\' Id Comic doesn\'t exists"));
-
-                List<ChapterData> chapters = comic.getChapters()
-                                .stream()
-                                .map(chapterMapper::toData)
-                                .toList();
-
-                return chapters;
         }
 
         public List<MultiPartPageData> buildMultiPartPageData(List<MultipartFile> pages) {

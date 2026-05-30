@@ -42,14 +42,13 @@ public class ChapterController {
         private final StorageService storageService;
         
 
-        @GetMapping()
-        public ResponseEntity<List<ChapterData>> getAllChapters(@PathVariable("comicID") UUID comicID)
-                        throws ResourceNotFoundException {
-
-                List<ChapterData> chapters = chapterService.byComicId(comicID);
-
-                return ResponseEntity.status(HttpStatus.OK)
-                                .body(chapters);
+        @GetMapping("/{chapterId}/{groupID}")
+        public ResponseEntity<List<PageData>> getPagesByGroup(
+                @PathVariable("comicID") UUID comicID,
+                @PathVariable("chapterId") UUID chapterID,
+                @PathVariable("groupID") UUID groupID
+        ) {
+                return ResponseEntity.ok(null);
         }
 
         @PostMapping(value = "/{chapterID}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })

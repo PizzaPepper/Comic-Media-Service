@@ -1,9 +1,3 @@
-server:
-  port: 2426
-
-storage:
-  location: ${user.home}/.cache/storage-comics
-
 spring:
   output:
       ansi:

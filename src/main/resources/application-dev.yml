@@ -9,3 +9,13 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+aws:
+  profile: floci
+  region: us-east-1
+  accessKey: test
+  secretKey: test
+  s3:
+    endpoint: http://localhost:4566
+    comic-storage-bucket-name: comics
+    # comic-cover-bucket-name: covers
