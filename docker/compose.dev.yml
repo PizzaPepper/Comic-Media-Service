@@ -1,7 +1,8 @@
+name: comic-media-service-dev
 services:
   db:
     image: postgres:15
-    container_name: spring-dev-db
+    container_name: postgres-db
     environment:
       POSTGRES_DB: mydb
       POSTGRES_USER: dev
