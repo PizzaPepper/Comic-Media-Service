@@ -22,7 +22,7 @@ import com.pepper.Comic_Media_Service.DTO.ChapterVersionData;
 import com.pepper.Comic_Media_Service.DTO.PageData;
 import com.pepper.Comic_Media_Service.DTO.Request.CreateChapterDataRequest;
 import com.pepper.Comic_Media_Service.DTO.Request.CreateChapterRequest;
-import com.pepper.Comic_Media_Service.DTO.Response.GenericResponse;
+import com.pepper.Comic_Media_Service.DTO.Response.GenericResponseWithData;
 import com.pepper.Comic_Media_Service.Exception.ResourceAlreadyExistsException;
 import com.pepper.Comic_Media_Service.Exception.ResourceNotFoundException;
 import com.pepper.Comic_Media_Service.Service.ChapterService;
@@ -52,7 +52,7 @@ public class ChapterController {
         }
 
         @PostMapping(value = "/{chapterID}", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
-        public ResponseEntity<GenericResponse> uploadChapter(
+        public ResponseEntity<GenericResponseWithData> uploadChapter(
                 @PathVariable("chapterID") UUID chapterID,
                 @RequestHeader("X-Scan-Group-Id") UUID groupID,
                 @RequestParam("pages") List<MultipartFile> pages
@@ -64,33 +64,35 @@ public class ChapterController {
                 ChapterVersionData pagesAdded = chapterService.createChapterVersionData(chapterID, groupID, pagesData);
                 
                 return ResponseEntity.status(HttpStatus.CREATED)
-                        .body(GenericResponse.builder()
+                        .body(GenericResponseWithData.builder()
                                 .success(true)
                                 .message(String.format("It was uploaded %d pages for '%s' - '%s'", 
                                         pagesAdded.getPages().size(), 
                                         pagesAdded.getChapter().getTitle(),
                                         pagesAdded.getChapter().getComic().getTitle()))
+                                .data(pagesAdded)
                                 .timestamp(LocalDateTime.now())
                         .build());
         }
 
         @PostMapping()
-        public ResponseEntity<GenericResponse> createChapter(
+        public ResponseEntity<GenericResponseWithData> createChapter(
                         @PathVariable("comicID") UUID comicID,
                         @Valid @RequestBody CreateChapterRequest request
         ) throws ResourceNotFoundException, ResourceAlreadyExistsException {
                 
-                chapterService.createChapterData(CreateChapterDataRequest.builder()
+                ChapterData newChapter = chapterService.createChapterData(CreateChapterDataRequest.builder()
                                 .comicId(comicID)
                                 .title(request.getTitle())
                                 .newNumber(request.getNumber())
                                 .build());
 
                 return ResponseEntity.status(HttpStatus.CREATED)
-                                .body(GenericResponse.builder()
+                                .body(GenericResponseWithData.builder()
                                                 .success(true)
                                                 .message("\'" + request.getTitle()
                                                                 + "\' chapter was created successfully")
+                                                .data(newChapter)
                                                 .timestamp(LocalDateTime.now()).build());
 
         }

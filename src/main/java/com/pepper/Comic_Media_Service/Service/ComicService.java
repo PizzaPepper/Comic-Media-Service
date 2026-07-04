@@ -24,7 +24,7 @@ public class ComicService {
     private final ComicMapper comicMapper;
 
     @Transactional
-    public void createComicData(CreateComicDataRequest request) throws ResourceAlreadyExistsException {
+    public ComicData createComicData(CreateComicDataRequest request) throws ResourceAlreadyExistsException {
 
         ComicEntity itExists = comicRepository.findByTitle(request.getTitle()).orElse(null);
 
@@ -38,7 +38,7 @@ public class ComicService {
                 .createdAt(LocalDateTime.now())
                 .build();
 
-        comicRepository.save(newComic);
+        return comicMapper.toData(comicRepository.save(newComic));
     }
 
     @Transactional

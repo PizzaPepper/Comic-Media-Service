@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pepper.Comic_Media_Service.DTO.ComicData;
 import com.pepper.Comic_Media_Service.DTO.Request.CreateComicDataRequest;
-import com.pepper.Comic_Media_Service.DTO.Response.GenericResponse;
+import com.pepper.Comic_Media_Service.DTO.Response.GenericResponseWithData;
 import com.pepper.Comic_Media_Service.Exception.BadRequestException;
 import com.pepper.Comic_Media_Service.Exception.ResourceAlreadyExistsException;
 import com.pepper.Comic_Media_Service.Exception.ResourceNotFoundException;
@@ -31,16 +31,17 @@ public class ComicController {
     private final ComicService comicService;
 
     @PostMapping
-    public ResponseEntity<GenericResponse> createComic(
+    public ResponseEntity<GenericResponseWithData> createComic(
             @Valid @RequestBody CreateComicDataRequest request)
             throws ResourceAlreadyExistsException, BadRequestException {
 
-        comicService.createComicData(request);
+        ComicData newComic = comicService.createComicData(request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(GenericResponse.builder()
+                .body(GenericResponseWithData.builder()
                         .message("\'" + request.getTitle() + "\' was created successfully")
                         .success(true)
+                        .data(newComic)
                         .timestamp(LocalDateTime.now()).build());
     }
 

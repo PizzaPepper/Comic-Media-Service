@@ -8,6 +8,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.pepper.Comic_Media_Service.DTO.ChapterData;
 import com.pepper.Comic_Media_Service.DTO.ChapterVersionData;
 import com.pepper.Comic_Media_Service.DTO.MultiPartPageData;
 import com.pepper.Comic_Media_Service.DTO.PageData;
@@ -40,7 +41,7 @@ public class ChapterService {
         private final ChapterMapper chapterMapper;
 
         @Transactional
-        public ChapterEntity createChapterData(CreateChapterDataRequest request)
+        public ChapterData createChapterData(CreateChapterDataRequest request)
                         throws ResourceAlreadyExistsException, ResourceNotFoundException {
 
                 ComicEntity comic = comicRepository.findById(request.getComicId())
@@ -62,7 +63,7 @@ public class ChapterService {
                                 .createdAt(LocalDateTime.now())
                                 .build();
 
-                return chapterRepository.save(newChapter);
+                return chapterMapper.toData(chapterRepository.save(newChapter)) ;
         }
 
         @Transactional
